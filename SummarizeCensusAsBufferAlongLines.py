@@ -82,7 +82,6 @@ class SummarizeCensusAsBufferAlongLines(object):
             parameterType="Required",
             direction="Output",
         )
-        paramSummaryBuffer.value = "SummaryBuffer"
 
         paramCentroids = arcpy.Parameter(
             displayName="Centroids",
@@ -116,7 +115,7 @@ class SummarizeCensusAsBufferAlongLines(object):
 
         # make the output summary buffer file name match the census polygons
         # name, but with __SummaryBuffer added to the end
-        if parameters[2].valueAsText:
+        if parameters[2].valueAsText and not parameters[2].hasBeenValidated:
             census_shape_name = os.path.splitext(parameters[2].valueAsText)[0]
             if os.path.sep in parameters[2].valueAsText:
                 census_shape_name = census_shape_name.split(os.path.sep)[-1]
