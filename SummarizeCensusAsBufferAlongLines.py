@@ -294,6 +294,27 @@ class SummarizeCensusAsBufferAlongLines(object):
             add_group_percent="NO_PERCENT",
             out_group_table=None,
         )
+
+        # rename summary field alias to match alias
+        arcpy.SetProgressorLabel("Renaming summary field aliases...")
+        for info in summary_fields:
+            field_name = info[0]
+            field_label = info[1]
+            statistic = info[2]
+            summary_field_name = f"{statistic.lower()}_{field_name}"
+            arcpy.AddMessage(
+                f'   ⌛ Renaming field: "{summary_field_name}" -> alias: "{field_label}{statistic}""...'
+            )
+            try:
+                arcpy.AlterField_management(
+                    in_table=params.get("OUTPUT_SUMMARY_BUFFER"),
+                    field=summary_field_name,
+                    new_field_alias=field_label,
+                )
+            except Exception:
+                # ignore error
+                False
+
         arcpy.AddMessage("   ✅ Done")
 
         return
