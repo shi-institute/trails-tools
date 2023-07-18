@@ -301,14 +301,15 @@ class SummarizeCensusAsBufferAlongLines(object):
             field_label = info[1]
             statistic = info[2]
             summary_field_name = f"{statistic.lower()}_{field_name}"
+            alias_name = f"{field_label}{statistic}"
             arcpy.AddMessage(
-                f'   ⌛ Renaming field: "{summary_field_name}" -> alias: "{field_label}{statistic}""...'
+                f'   ⌛ Renaming field: "{summary_field_name}" -> alias: "{alias_name}"...'
             )
             try:
                 arcpy.AlterField_management(
                     in_table=params.get("OUTPUT_SUMMARY_BUFFER"),
                     field=summary_field_name,
-                    new_field_alias=field_label,
+                    new_field_alias=alias_name,
                 )
             except Exception:
                 # ignore error
