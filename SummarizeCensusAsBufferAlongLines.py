@@ -84,6 +84,15 @@ class SummarizeCensusAsBufferAlongLines(object):
         )
         paramSummaryBuffer.value = "SummaryBuffer"
 
+        paramCentroids = arcpy.Parameter(
+            displayName="Centroids",
+            name="OUTPUT_I_CENTROIDS",
+            datatype="DEFeatureClass",
+            parameterType="Optional",
+            direction="Output",
+            category="Intermediate Outputs",
+        )
+
         params = [
             paramCensus,
             paramCensusData,
@@ -92,6 +101,7 @@ class SummarizeCensusAsBufferAlongLines(object):
             paramBufferDissolve,
             paramCensusFields,
             paramSummaryBuffer,
+            paramCentroids,
         ]
         return params
 
@@ -192,9 +202,14 @@ class SummarizeCensusAsBufferAlongLines(object):
         arcpy.SetProgressorLabel("Creating centroids...")
         arcpy.AddMessage("⏳ Creating centroids for census areas...")
         arcpy.AddMessage("   ⌛ Creating centroids...")
+        centroids_layer = (
+            params.get("OUTPUT_I_CENTROIDS")
+            if params.get("OUTPUT_I_CENTROIDS")
+            else "LinesIntersectionAreaCentroids"
+        )
         arcpy.management.FeatureToPoint(
             in_features="LinesIntersectionArea",
-            out_feature_class="LinesIntersectionAreaCentroids",
+            out_feature_class=centroids_layer,
             point_location="CENTROID",
         )
 
@@ -244,7 +259,7 @@ class SummarizeCensusAsBufferAlongLines(object):
         arcpy.AddMessage("         Using field mappings:")
         arcpy.AddMessage(f"         {fieldmappings.exportToString()}")
         arcpy.management.JoinField(
-            in_data="LinesIntersectionAreaCentroids",
+            in_data=centroids_layer,
             in_field="GISJOIN",
             join_table="CensusTableView",
             join_field="GISJOIN",
@@ -268,7 +283,7 @@ class SummarizeCensusAsBufferAlongLines(object):
         )
         arcpy.analysis.SummarizeWithin(
             in_polygons="TrailsBuffer",
-            in_sum_features="LinesIntersectionAreaCentroids",
+            in_sum_features=centroids_layer,
             out_feature_class=params.get("OUTPUT_SUMMARY_BUFFER"),
             keep_all_polygons="KEEP_ALL",
             sum_fields=summary_fields_str,
