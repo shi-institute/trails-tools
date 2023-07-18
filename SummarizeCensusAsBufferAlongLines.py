@@ -247,6 +247,7 @@ class SummarizeCensusAsBufferAlongLines(object):
             arcpy.AddMessage(field_map)
             outputField = field_map.outputField
             outputField.aliasName = field_label
+            outputField.type = "Integer"
             field_map.outputField = outputField
 
             fieldmappings.addFieldMap(field_map)
