@@ -15,9 +15,12 @@ from SummarizeCensusAsBufferAlongLines import (
 import MergeConnectingTrails
 
 importlib.reload(MergeConnectingTrails)
-from MergeConnectingTrails import (
-    MergeConnectingTrails as MergeConnectingTrailsTool,
-)
+from MergeConnectingTrails import MergeConnectingTrails as MergeConnectingTrailsTool
+
+import ExtendLines
+
+importlib.reload(ExtendLines)
+from ExtendLines import ExtendLines as ExtendLinesTool
 
 ########################################################
 
@@ -30,4 +33,8 @@ class Toolbox(object):
         self.alias = "Trails Tools"
 
         # List of tool classes associated with this toolbox
-        self.tools = [SummarizeCensusAsBufferAlongLinesTool, MergeConnectingTrailsTool]
+        self.tools = [
+            SummarizeCensusAsBufferAlongLinesTool,
+            MergeConnectingTrailsTool,
+            ExtendLinesTool,
+        ]
